@@ -1,7 +1,8 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Injectable } from '@nestjs/common';
+import { RegisterDto } from './dto/Register';
 
 @Injectable()
 export class UserRepository {
@@ -29,15 +30,75 @@ export class UserRepository {
     return this.userRepository.update({ email }, data);
   }
 
-  async findAllByIsActive(isActive: boolean) {
-    return this.userRepository.find({
+  async findAllByIsActive(
+    page: number,
+    size: number,
+    keyword: string,
+    isActive: number,
+  ) {
+    console.log(isActive);
+    let offset = 0;
+    let limit = 10;
+    if (page && size) {
+      offset = (Number(page) - 1) * Number(size);
+    }
+    if (size) {
+      limit = Number(size);
+    }
+    if (!isActive) {
+      isActive = 0;
+    }
+    const operator: any = {
+      take: limit,
+      skip: offset,
       where: {
         isActive,
       },
-    });
+      order: { createdAt: 'DESC' },
+    };
+    const [result, total] = await this.userRepository.findAndCount(operator);
+    return {
+      data: result,
+      count: total,
+    };
   }
 
-  async findAll() {
-    return this.userRepository.findAndCount();
+  async findAndCount(page: number, size: number, keyword: string) {
+    let offset = 0;
+    let limit = 10;
+    if (page && size) {
+      offset = (Number(page) - 1) * Number(size);
+    }
+    if (size) {
+      limit = Number(size);
+    }
+    const operator: any = {
+      take: limit,
+      skip: offset,
+      where: {},
+      order: { createdAt: 'DESC' },
+    };
+    if (keyword) {
+      operator.where = { email: Like('%' + keyword + '%') };
+    }
+    const [result, total] = await this.userRepository.findAndCount(operator);
+
+    return {
+      data: result,
+      count: total,
+    };
+  }
+
+  async create(data: RegisterDto) {
+    return this.userRepository.create(data);
+  }
+
+  async updateIsActiveUser(data: { email: string; isActive: boolean }) {
+    return this.userRepository.update(
+      { email: data.email },
+      {
+        isActive: data.isActive,
+      },
+    );
   }
 }

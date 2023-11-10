@@ -23,7 +23,12 @@ export class AuthService {
     // if (!compareResult) {
     //   throw new UnauthorizedException('Email or password is incorrect');
     // }
-    if (password !== user.password) {
+
+    const isPasswordCorrect = await this.comparePassword(
+      password,
+      user.password,
+    );
+    if (!isPasswordCorrect) {
       throw new UnauthorizedException('Email or password is incorrect');
     }
     return user;
@@ -44,5 +49,12 @@ export class AuthService {
         expiresIn: this.configService.get<string>('jwtExpiresIn'),
       }),
     };
+  }
+
+  async comparePassword(
+    bodyPassword: string,
+    passwordDb: string,
+  ): Promise<boolean> {
+    return bcrypt.compareSync(bodyPassword, passwordDb);
   }
 }

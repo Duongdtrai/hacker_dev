@@ -7,16 +7,31 @@ import {
   Ip,
   Request,
   Get,
+  Query,
+  Put,
 } from '@nestjs/common';
-import { AuthenticationGuard } from '../auth/guards/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { UserService } from './user.service';
 import { transformError, transformResponse } from 'src/common/helpers';
 import { VerifyEmailDto } from './dto/VerifyEmailDto';
 import { SendOtpDto } from './dto/SendOtpDto';
 
+import { RegisterDto } from './dto/Register';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Post('/register')
+  async register(@Body() bodyData: RegisterDto) {
+    try {
+      await this.userService.register(bodyData);
+      return transformResponse({
+        data: [],
+      });
+    } catch (error) {
+      return transformError(error);
+    }
+  }
 
   @Post('/verify-email')
   async verifyEmail(@Body() bodyData: VerifyEmailDto) {
@@ -69,10 +84,24 @@ export class UserController {
   }
 
   @Get('list-block')
-  @UseGuards(AuthenticationGuard)
-  async listBlock() {
+  @UseGuards(JwtAuthGuard)
+  async listBlock(
+    @Query()
+    query: {
+      page: number;
+      size: number;
+      keyword: string;
+      isActive: number;
+    },
+  ) {
     try {
-      const listBlockUser = await this.userService.findAllByIsActive(false);
+      console.log(query);
+      const listBlockUser = await this.userService.findAllByIsActive(
+        query.page,
+        query.size,
+        query.keyword,
+        query.isActive,
+      );
       return transformResponse({
         data: listBlockUser,
       });
@@ -81,11 +110,17 @@ export class UserController {
     }
   }
 
-  @Post('/findAllUser')
-  @UseGuards(AuthenticationGuard)
-  async findAll() {
+  @Get('/get-all-user')
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Query() query: { page: number; size: number; keyword: string },
+  ) {
     try {
-      const data = await this.userService.findAllUser();
+      const data = await this.userService.findAllUser(
+        query.page,
+        query.size,
+        query.keyword,
+      );
       return transformResponse({
         data,
       });
@@ -94,14 +129,14 @@ export class UserController {
     }
   }
 
-  @Post('change-active')
-  @UseGuards(AuthenticationGuard)
-  async changeActive(@Body() bodyData: any, @Request() request) {
+  @Put('block-user')
+  @UseGuards(JwtAuthGuard)
+  async changeActive(@Body() bodyData: { email: string; isActive: boolean }) {
     try {
-      const userId = request.user.id;
-      const listBlockUser = await this.userService.update(userId, bodyData);
+      console.log(bodyData);
+      await this.userService.updateIsActiveUser(bodyData);
       return transformResponse({
-        data: listBlockUser,
+        data: [],
       });
     } catch (error) {
       return transformError(error);

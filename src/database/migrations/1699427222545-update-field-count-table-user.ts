@@ -7,9 +7,9 @@ export class CreateFiledUsersTable1592555965809 implements MigrationInterface {
       _tableName,
       new TableColumn({
         name: 'count',
-        type: 'tinyInt', // Kiểu dữ liệu của cột (integer)
-        isNullable: false, // Cho phép giá trị trong cột có thể null hay không (false nếu không cho phép null)
-        default: 0, // Giá trị mặc định của cột (ở đây mặc định là 0)
+        type: 'tinyInt',
+        isNullable: false,
+        default: 0,
       }),
     );
   }

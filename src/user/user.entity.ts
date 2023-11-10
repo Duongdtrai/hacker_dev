@@ -18,37 +18,40 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
-  ip: string;
-
-  @Column()
-  otp: string;
-
   @Exclude()
-  @Column()
+  @Column({ nullable: false })
   password: string;
 
-  @Column({ default: true })
+  @Column({ nullable: true, default: null })
+  firstName: string;
+
+  @Column({ nullable: true, default: null })
+  lastName: string;
+
+  @Column({ nullable: true, default: null })
+  ip: string;
+
+  @Column({ nullable: true, default: null })
+  otp: string;
+
+  @Column({ nullable: true, default: null })
   isActive: boolean;
 
-  @Column({ default: 0 })
+  @Column({ nullable: true, default: 0 })
   count: number;
 
   @CreateDateColumn({
-    nullable: true,
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  createdAt: string;
+  public createdAt: Date;
 
   @UpdateDateColumn({
-    nullable: true,
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
-  updatedAt: string;
+  public updatedAt: Date;
 
   constructor(partial: Partial<User>) {
     super();
