@@ -11,6 +11,7 @@ import typeorm from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
+import { IpsModule } from './ips/ips.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { UserModule } from './user/user.module';
     LoggerModule,
     AuthModule,
     UserModule,
+    IpsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

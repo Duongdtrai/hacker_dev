@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
 const _tableName = 'users';
-export class CreateFiledUsersTable1592555965810 implements MigrationInterface {
+export class CreateFiledUsersTable1592555965811 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
       _tableName,

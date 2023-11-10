@@ -95,7 +95,6 @@ export class UserController {
     },
   ) {
     try {
-      console.log(query);
       const listBlockUser = await this.userService.findAllByIsActive(
         query.page,
         query.size,
@@ -133,7 +132,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async changeActive(@Body() bodyData: { email: string; isActive: boolean }) {
     try {
-      console.log(bodyData);
       await this.userService.updateIsActiveUser(bodyData);
       return transformResponse({
         data: [],

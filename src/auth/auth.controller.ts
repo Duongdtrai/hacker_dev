@@ -22,10 +22,14 @@ export class AuthController {
   @Post('/sign-in')
   @UseGuards(LocalAuthGuard)
   async signIn(@Request() request, @Ip() ip) {
-    console.log(ip);
     try {
       const data = await this.authService.generateJwtToken(request.user, ip);
-      return transformResponse({ data });
+      return transformResponse({
+        data: {
+          ...data,
+          userId: request.user.id,
+        },
+      });
     } catch (error) {}
   }
 }

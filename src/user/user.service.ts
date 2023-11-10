@@ -16,6 +16,10 @@ export class UserService {
     return this.repository.findOne({ where: { email } });
   }
 
+  findById(id: number): Promise<User | null> {
+    return this.repository.findOne({ where: { id } });
+  }
+
   getInactiveUsers(): Promise<User[]> {
     return this.repository.getInactiveUsers();
   }
@@ -42,9 +46,8 @@ export class UserService {
     return this.repository.findAndCount(page, size, keyword);
   }
 
-  async register(body: RegisterDto): Promise<void> {
-    console.log(body);
-    const { email, password, firstName, lastName }: RegisterDto = body;
+  async register(body: RegisterDto): Promise<void | any> {
+    const { email, password, firstName, lastName, otp }: RegisterDto = body;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -54,9 +57,11 @@ export class UserService {
         password: await this.generatePassword(password),
         firstName: firstName.trim(),
         lastName: lastName.trim(),
+        otp,
       });
       await queryRunner.manager.save(User, newUser);
       await queryRunner.commitTransaction();
+      return newUser;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

@@ -36,7 +36,6 @@ export class UserRepository {
     keyword: string,
     isActive: number,
   ) {
-    console.log(isActive);
     let offset = 0;
     let limit = 10;
     if (page && size) {
@@ -53,6 +52,9 @@ export class UserRepository {
       skip: offset,
       where: {
         isActive,
+      },
+      relations: {
+        user_ips: true,
       },
       order: { createdAt: 'DESC' },
     };
@@ -77,6 +79,9 @@ export class UserRepository {
       skip: offset,
       where: {},
       order: { createdAt: 'DESC' },
+      relations: {
+        user_ips: true,
+      },
     };
     if (keyword) {
       operator.where = { email: Like('%' + keyword + '%') };

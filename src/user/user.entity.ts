@@ -6,8 +6,10 @@ import {
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude, Expose } from 'class-transformer';
+import { IPS_Entity } from 'src/ips/ips.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -62,4 +64,7 @@ export class User extends BaseEntity {
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
+
+  @OneToMany(() => IPS_Entity, (ipsEntity) => ipsEntity.user)
+  user_ips: IPS_Entity[];
 }
