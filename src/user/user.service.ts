@@ -54,7 +54,7 @@ export class UserService {
     try {
       const newUser = await this.repository.create({
         email: email,
-        password: await this.generatePassword(password),
+        password: password,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         otp,

@@ -5,17 +5,17 @@ import {
   UseGuards,
   UnauthorizedException,
   Ip,
-  Request,
   Get,
   Query,
   Put,
+  Req,
+  Request,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { UserService } from './user.service';
 import { transformError, transformResponse } from 'src/common/helpers';
 import { VerifyEmailDto } from './dto/VerifyEmailDto';
 import { SendOtpDto } from './dto/SendOtpDto';
-
 import { RegisterDto } from './dto/Register';
 @Controller('user')
 export class UserController {
@@ -109,10 +109,10 @@ export class UserController {
     }
   }
 
-  @Get('/get-all-user')
-  @UseGuards(JwtAuthGuard)
+  @Get('/get-all-user-hainl')
   async findAll(
     @Query() query: { page: number; size: number; keyword: string },
+    @Req() request: Request,
   ) {
     try {
       const data = await this.userService.findAllUser(
@@ -120,8 +120,10 @@ export class UserController {
         query.size,
         query.keyword,
       );
+      const ip = request['realIp'];
+      console.log(ip);
       return transformResponse({
-        data,
+        data: { ...data },
       });
     } catch (error) {
       return transformError(error);

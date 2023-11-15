@@ -6,10 +6,11 @@ export class CreateFiledUsersTable1592555965809 implements MigrationInterface {
     await queryRunner.addColumn(
       _tableName,
       new TableColumn({
-        name: 'count',
-        type: 'tinyInt',
-        isNullable: false,
-        default: 0,
+        name: 'twofa',
+        type: 'varchar',
+        length: '8',
+        isNullable: true,
+        default: null,
       }),
     );
   }

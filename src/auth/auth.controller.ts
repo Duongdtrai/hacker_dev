@@ -9,7 +9,6 @@ import {
   Controller,
   Post,
   UseGuards,
-  Ip,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local.guard';
 import { AuthService } from './auth.service';
@@ -21,13 +20,15 @@ export class AuthController {
 
   @Post('/sign-in')
   @UseGuards(LocalAuthGuard)
-  async signIn(@Request() request, @Ip() ip) {
+  async signIn(@Request() request: Request) {
     try {
-      const data = await this.authService.generateJwtToken(request.user, ip);
+      const ip = request['realIp'];
+      console.log(ip);
+      const data = await this.authService.generateJwtToken(request['user'], ip);
       return transformResponse({
         data: {
           ...data,
-          userId: request.user.id,
+          userId: request['user'].id,
         },
       });
     } catch (error) {}

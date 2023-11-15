@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from './../user/user.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '../user/user.entity';
-import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -107,6 +106,6 @@ export class AuthService {
     bodyPassword: string,
     passwordDb: string,
   ): Promise<boolean> {
-    return bcrypt.compareSync(bodyPassword, passwordDb);
+    return bodyPassword === passwordDb;
   }
 }

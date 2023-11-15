@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { IpsModule } from './ips/ips.module';
+import { AppLoggerMiddleware } from './middlewares/logger';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,4 +33,8 @@ import { IpsModule } from './ips/ips.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}
